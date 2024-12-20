@@ -7,8 +7,8 @@ CURRENT_DIR=$(
 BUILD_TYPE="Debug"
 INSTALL_PREFIX="${CURRENT_DIR}/out"
 
-SHORT=r:,v:,i:,b:,p:,s:,d:,t:,
-LONG=run-mode:,soc-version:,install-path:,build-type:,install-prefix:,vector-size:,block-dim:,tile-num:,
+SHORT=r:,v:,i:,b:,p:,s:,d:,
+LONG=run-mode:,soc-version:,install-path:,build-type:,install-prefix:,vector-size:,block-dim:,
 OPTS=$(getopt -a --options $SHORT --longoptions $LONG -- "$@")
 eval set -- "$OPTS"
 SOC_VERSION="Ascend910B1"
@@ -41,10 +41,6 @@ while :; do
         ;;
     -d | --block-dim)
         BLOCK_DIM=$2
-        shift 2
-        ;;
-    -t | --tile-num)
-        TILE_NUM=$2
         shift 2
         ;;
     --)
@@ -118,13 +114,13 @@ cp ./out/bin/ascendc_kernels_bbit ./
     export LD_LIBRARY_PATH=$(pwd)/out/lib:$(pwd)/out/lib64:${_ASCEND_INSTALL_PATH}/lib64:$LD_LIBRARY_PATH
     if [[ "$RUN_WITH_TOOLCHAIN" -eq 1 ]]; then
         if [ "${RUN_MODE}" = "npu" ]; then
-            msprof op --application=./ascendc_kernels_bbit ${VECTOR_SIZE} ${BLOCK_DIM} ${TILE_NUM}
+            msprof op --application=./ascendc_kernels_bbit ${VECTOR_SIZE} ${BLOCK_DIM}
         elif [ "${RUN_MODE}" = "sim" ]; then
-            msprof op simulator --application=./ascendc_kernels_bbit ${VECTOR_SIZE} ${BLOCK_DIM} ${TILE_NUM}
+            msprof op simulator --application=./ascendc_kernels_bbit ${VECTOR_SIZE} ${BLOCK_DIM}
         elif [ "${RUN_MODE}" = "cpu" ]; then
-            ./ascendc_kernels_bbit ${VECTOR_SIZE} ${BLOCK_DIM} ${TILE_NUM}
+            ./ascendc_kernels_bbit ${VECTOR_SIZE} ${BLOCK_DIM}
         fi
     else
-        ./ascendc_kernels_bbit ${VECTOR_SIZE} ${BLOCK_DIM} ${TILE_NUM}
+        ./ascendc_kernels_bbit ${VECTOR_SIZE} ${BLOCK_DIM}
     fi
 )
